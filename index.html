@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track, understand, and reduce your carbon footprint with AI-powered insights">
+  <meta name="theme-color" content="#1a3d2b">
+  <title>CarbonTrack — Know Your Footprint, Change Your Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --forest:    #1a3d2b;
+      --moss:      #2d6a4f;
+      --sage:      #52b788;
+      --mist:      #b7e4c7;
+      --sky:       #e8f5e1;
+      --amber:     #e9c46a;
+      --rust:      #e76f51;
+      --ink:       #0d1f17;
+      --chalk:     #f8fdf4;
+      --mid:       #4a7c5f;
+      --border:    rgba(45,106,79,0.15);
+      --shadow:    0 4px 24px rgba(26,61,43,0.12);
+      --shadow-lg: 0 12px 48px rgba(26,61,43,0.18);
+      --r:         12px;
+      --r-lg:      20px;
+    }
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--chalk);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; border: none; font-family: inherit; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ===== LAYOUT ===== */
+    .app { display: flex; flex-direction: column; min-height: 100vh; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ===== NAV ===== */
+    nav {
+      background: var(--forest);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.2rem; color: var(--mist);
+      text-decoration: none;
+    }
+    .nav-logo .leaf { font-size: 1.5rem; }
+    .nav-tabs {
+      display: flex; gap: 4px;
+    }
+    .nav-tab {
+      background: transparent;
+      color: rgba(183,228,199,0.7);
+      padding: 8px 16px;
+      border-radius: var(--r);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-tab:hover, .nav-tab.active {
+      background: rgba(82,183,136,0.2);
+      color: var(--mist);
+    }
+    .nav-tab.active { color: var(--sage); }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 60%, #3a7d5e 100%);
+      color: white;
+      padding: 80px 0 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2352b788' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-content { position: relative; text-align: center; }
+    .hero-eyebrow {
+      display: inline-block;
+      background: rgba(82,183,136,0.2);
+      border: 1px solid rgba(82,183,136,0.4);
+      color: var(--sage);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      line-height: 1.15;
+      margin-bottom: 20px;
+      max-width: 720px;
+      margin-left: auto; margin-right: auto;
+    }
+    .hero h1 em { font-style: italic; color: var(--sage); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(183,228,199,0.85);
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--sage);
+      color: var(--forest);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 100px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(82,183,136,0.35);
+    }
+    .hero-cta:hover { background: var(--mist); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(82,183,136,0.45); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 48px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(82,183,136,0.2);
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--sage);
+      display: block;
+    }
+    .hero-stat-label { font-size: 0.8rem; color: rgba(183,228,199,0.6); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 20px 24px 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 700; font-size: 1rem;
+      color: var(--forest);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-body { padding: 20px 24px 24px; }
+
+    /* ===== CALCULATOR ===== */
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      padding: 40px 0;
+    }
+    .calc-sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .calc-section {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .calc-section-header {
+      background: var(--sky);
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      user-select: none;
+    }
+    .calc-section-header:hover { background: var(--mist); }
+    .calc-section-icon { font-size: 1.2rem; }
+    .calc-section-title { font-weight: 600; font-size: 0.95rem; color: var(--forest); flex: 1; }
+    .calc-section-toggle { color: var(--moss); font-size: 0.8rem; transition: transform 0.2s; }
+    .calc-section-toggle.open { transform: rotate(180deg); }
+    .calc-section-body { padding: 16px 20px; display: none; }
+    .calc-section-body.open { display: block; }
+    .form-group { margin-bottom: 14px; }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--mid);
+      margin-bottom: 5px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--chalk);
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--sage); background: white; }
+    .form-select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--chalk);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a7c5f' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+    .form-select:focus { outline: none; border-color: var(--sage); }
+    .calc-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--moss), var(--sage));
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px;
+      border-radius: var(--r);
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(45,106,79,0.3);
+    }
+    .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,106,79,0.4); }
+
+    /* ===== RESULTS ===== */
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .result-total-card {
+      background: linear-gradient(135deg, var(--forest), var(--moss));
+      color: white;
+      border-radius: var(--r-lg);
+      padding: 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .result-total-card::after {
+      content: '🌍';
+      position: absolute;
+      right: 24px; bottom: 16px;
+      font-size: 4rem;
+      opacity: 0.15;
+    }
+    .result-total-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; margin-bottom: 8px; }
+    .result-total-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: var(--sage);
+      line-height: 1;
+    }
+    .result-total-unit { font-size: 1rem; opacity: 0.7; margin-top: 4px; }
+    .result-comparison {
+      display: flex; gap: 12px; margin-top: 20px; justify-content: center;
+    }
+    .result-comp-badge {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+    }
+    .result-comp-badge.over { background: rgba(231,111,81,0.2); border-color: rgba(231,111,81,0.4); }
+    .result-comp-badge.under { background: rgba(82,183,136,0.2); border-color: rgba(82,183,136,0.4); }
+
+    .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .breakdown-item {
+      background: var(--sky);
+      border-radius: var(--r);
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+    .breakdown-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .breakdown-cat { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); margin-bottom: 2px; }
+    .breakdown-val { font-weight: 700; font-size: 1.1rem; color: var(--forest); }
+    .breakdown-pct { font-size: 0.8rem; color: var(--mid); }
+    .breakdown-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .breakdown-bar-fill {
+      height: 100%;
+      background: var(--sage);
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+
+    /* ===== EQUIVALENTS ===== */
+    .equivalents {
+      display: flex; gap: 12px;
+    }
+    .equiv-item {
+      flex: 1;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      text-align: center;
+    }
+    .equiv-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .equiv-val { font-weight: 700; font-size: 0.95rem; color: var(--forest); }
+    .equiv-label { font-size: 0.72rem; color: var(--mid); }
+
+    /* ===== RECOMMENDATIONS ===== */
+    .rec-list { display: flex; flex-direction: column; gap: 10px; }
+    .rec-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px;
+      background: var(--sky);
+      border-radius: var(--r);
+      border-left: 3px solid var(--sage);
+    }
+    .rec-item.priority-high { border-left-color: var(--rust); }
+    .rec-item.priority-medium { border-left-color: var(--amber); }
+    .rec-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .rec-action { font-weight: 600; font-size: 0.9rem; color: var(--forest); }
+    .rec-context { font-size: 0.8rem; color: var(--mid); margin-top: 2px; }
+    .rec-saving {
+      margin-left: auto; flex-shrink: 0;
+      font-weight: 700; font-size: 0.85rem;
+      color: var(--moss);
+      background: rgba(82,183,136,0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* ===== AI CHAT ===== */
+    .chat-layout {
+      max-width: 760px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .chat-header {
+      background: linear-gradient(135deg, var(--forest), var(--moss));
+      color: white;
+      border-radius: var(--r-lg);
+      padding: 28px 32px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .chat-avatar {
+      width: 60px; height: 60px;
+      background: var(--sage);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .chat-header-text h2 { font-size: 1.25rem; margin-bottom: 4px; }
+    .chat-header-text p { font-size: 0.875rem; opacity: 0.75; }
+    .chat-window {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      height: 400px;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-msg {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .chat-msg.bot {
+      background: var(--sky);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 16px 4px;
+      align-self: flex-start;
+    }
+    .chat-msg.user {
+      background: var(--moss);
+      color: white;
+      border-radius: 16px 16px 4px 16px;
+      align-self: flex-end;
+    }
+    .chat-typing {
+      align-self: flex-start;
+      display: flex; gap: 4px; align-items: center;
+      padding: 14px 18px;
+      background: var(--sky);
+      border-radius: 16px 16px 16px 4px;
+      border: 1px solid var(--border);
+    }
+    .chat-dot {
+      width: 7px; height: 7px;
+      background: var(--mid);
+      border-radius: 50%;
+      animation: bounce 1.2s ease infinite;
+    }
+    .chat-dot:nth-child(2) { animation-delay: 0.2s; }
+    .chat-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+    .chat-input-row {
+      display: flex; gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: white;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { outline: none; border-color: var(--sage); }
+    .chat-send-btn {
+      background: var(--moss);
+      color: white;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover { background: var(--forest); transform: scale(1.05); }
+    .quick-questions {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .quick-q {
+      background: var(--sky);
+      border: 1px solid var(--border);
+      color: var(--moss);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      transition: all 0.2s;
+    }
+    .quick-q:hover { background: var(--mist); border-color: var(--sage); }
+
+    /* ===== DASHBOARD ===== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 40px 0;
+    }
+    .stat-card {
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .stat-card-icon { font-size: 2rem; margin-bottom: 12px; }
+    .stat-card-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .stat-card-label { font-size: 0.8rem; color: var(--mid); margin-top: 2px; }
+    .stat-card-delta {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .stat-card-delta.up { background: rgba(231,111,81,0.1); color: var(--rust); }
+    .stat-card-delta.down { background: rgba(82,183,136,0.1); color: var(--moss); }
+
+    /* Chart */
+    .chart-container {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 24px;
+      grid-column: span 2;
+    }
+    .chart-canvas-wrap { position: relative; height: 240px; margin-top: 16px; }
+    canvas#trendChart { width: 100% !important; }
+
+    /* Badges */
+    .badges-card {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .badge-item {
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .badge-item.earned {
+      background: linear-gradient(135deg, var(--sky), var(--mist));
+      border-color: var(--sage);
+      box-shadow: 0 2px 12px rgba(82,183,136,0.2);
+    }
+    .badge-item.locked { opacity: 0.4; filter: grayscale(0.8); }
+    .badge-icon { font-size: 1.6rem; margin-bottom: 4px; }
+    .badge-name { font-size: 0.72rem; font-weight: 600; color: var(--forest); }
+
+    /* Goals */
+    .goals-section { padding: 0 0 40px; }
+    .goals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .goal-card {
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .goal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .goal-title { font-weight: 600; font-size: 0.95rem; color: var(--forest); }
+    .goal-category {
+      font-size: 0.72rem;
+      background: var(--sky);
+      color: var(--moss);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .goal-progress-bar {
+      height: 8px;
+      background: var(--sky);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .goal-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--moss), var(--sage));
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .goal-meta {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--mid);
+    }
+    .add-goal-btn {
+      background: var(--sky);
+      border: 1.5px dashed var(--sage);
+      color: var(--moss);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 16px;
+      border-radius: var(--r-lg);
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .add-goal-btn:hover { background: var(--mist); border-style: solid; }
+
+    /* ===== TIPS PAGE ===== */
+    .tips-layout { padding: 40px 0; }
+    .tips-filter {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--mid);
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--forest);
+      color: white;
+      border-color: var(--forest);
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .tip-card {
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .tip-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .tip-card-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .tip-difficulty {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .tip-difficulty.easy { background: rgba(82,183,136,0.12); color: var(--moss); }
+    .tip-difficulty.medium { background: rgba(233,196,106,0.2); color: #b8860b; }
+    .tip-difficulty.hard { background: rgba(231,111,81,0.12); color: var(--rust); }
+    .tip-title { font-weight: 600; font-size: 0.95rem; color: var(--forest); margin-bottom: 6px; }
+    .tip-saving {
+      font-size: 0.82rem; color: var(--mid);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .tip-saving strong { color: var(--moss); }
+    .tip-impact {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.72rem; font-weight: 600;
+      margin-top: 10px;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .tip-impact.high { background: rgba(82,183,136,0.12); color: var(--moss); }
+    .tip-impact.medium { background: rgba(233,196,106,0.15); color: #9a7b1d; }
+    .tip-impact.low { background: var(--sky); color: var(--mid); }
+    .tip-done-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--mid);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px;
+      border-radius: var(--r);
+      transition: all 0.2s;
+    }
+    .tip-done-btn:hover {
+      background: var(--sky);
+      border-color: var(--sage);
+      color: var(--moss);
+    }
+    .tip-done-btn.done {
+      background: var(--sky);
+      border-color: var(--sage);
+      color: var(--moss);
+    }
+
+    /* ===== PROFILE PAGE ===== */
+    .profile-layout {
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    .profile-header {
+      background: linear-gradient(135deg, var(--forest), var(--moss));
+      border-radius: var(--r-lg);
+      padding: 32px;
+      color: white;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .profile-avatar {
+      width: 80px; height: 80px;
+      background: var(--sage);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 16px;
+    }
+    .profile-name { font-size: 1.4rem; font-weight: 700; }
+    .profile-joined { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
+    .profile-form-card {
+      background: white;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .profile-form-title { font-weight: 700; font-size: 1rem; color: var(--forest); margin-bottom: 20px; }
+    .save-profile-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--moss), var(--sage));
+      color: white;
+      font-weight: 700;
+      padding: 13px;
+      border-radius: var(--r);
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+    .save-profile-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(45,106,79,0.3); }
+
+    /* ===== ONBOARDING ===== */
+    .onboarding-overlay {
+      position: fixed; inset: 0;
+      background: rgba(13,31,23,0.85);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .onboarding-card {
+      background: white;
+      border-radius: var(--r-lg);
+      max-width: 520px;
+      width: 100%;
+      padding: 40px;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .onboarding-emoji { font-size: 3.5rem; margin-bottom: 20px; }
+    .onboarding-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--forest);
+      margin-bottom: 12px;
+    }
+    .onboarding-sub { color: var(--mid); margin-bottom: 28px; line-height: 1.6; }
+    .onboarding-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--moss), var(--sage));
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px;
+      border-radius: var(--r);
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .onboarding-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(45,106,79,0.35); }
+    .onboarding-skip { background: none; color: var(--mid); font-size: 0.875rem; text-decoration: underline; }
+
+    /* ===== TOAST ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 500;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .toast {
+      background: var(--forest);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--r);
+      font-size: 0.875rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 10px;
+      animation: toastIn 0.3s ease;
+      max-width: 320px;
+    }
+    .toast.success { background: var(--moss); }
+    .toast.warning { background: #b8860b; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ===== UTILITY ===== */
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--forest);
+      margin-bottom: 4px;
+    }
+    .section-sub { color: var(--mid); font-size: 0.9rem; margin-bottom: 24px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .text-moss { color: var(--moss); }
+    .text-rust { color: var(--rust); }
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--mid);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .calc-layout { grid-template-columns: 1fr; }
+      .dashboard-grid { grid-template-columns: 1fr 1fr; }
+      .chart-container { grid-column: span 2; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .breakdown-grid { grid-template-columns: 1fr 1fr; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
+      .nav-tabs { display: none; }
+      .goals-grid { grid-template-columns: 1fr; }
+      .badges-grid { grid-template-columns: repeat(3, 1fr); }
+      .equivalents { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .chart-container { grid-column: span 1; }
+      .breakdown-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      nav, .chat-layout { display: none; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+    }
+
+    /* ===== ACCESSIBILITY ===== */
+    :focus-visible {
+      outline: 2px solid var(--sage);
+      outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- NAV -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a class="nav-logo" href="#" onclick="showPage('home'); return false;" aria-label="CarbonTrack Home">
+        <span class="leaf" aria-hidden="true">🌿</span>
+        CarbonTrack
+      </a>
+      <div class="nav-tabs" role="tablist">
+        <button class="nav-tab active" onclick="showPage('home')" role="tab" aria-selected="true">Home</button>
+        <button class="nav-tab" onclick="showPage('calculator')" role="tab">Calculator</button>
+        <button class="nav-tab" onclick="showPage('dashboard')" role="tab">Dashboard</button>
+        <button class="nav-tab" onclick="showPage('tips')" role="tab">Tips</button>
+        <button class="nav-tab" onclick="showPage('assistant')" role="tab">AI Guide</button>
+        <button class="nav-tab" onclick="showPage('profile')" role="tab">Profile</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <section class="hero" role="banner">
+      <div class="container hero-content">
+        <span class="hero-eyebrow">Carbon Footprint Awareness Platform</span>
+        <h1>Know Your <em>Footprint</em>,<br>Change Your Future</h1>
+        <p class="hero-sub">Track, understand, and reduce your environmental impact with AI-powered insights and personalized action plans.</p>
+        <button class="hero-cta" onclick="showPage('calculator')">
+          🌱 Calculate My Footprint
+        </button>
+        <div class="hero-stats" aria-label="Platform statistics">
+          <div class="hero-stat">
+            <span class="hero-stat-num">4.9T</span>
+            <span class="hero-stat-label">kg CO₂ World Average</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">2.0T</span>
+            <span class="hero-stat-label">kg CO₂ 2030 Target</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">37B</span>
+            <span class="hero-stat-label">Tonnes emitted yearly</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="container" style="padding: 48px 24px;">
+      <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 20px;">
+        <div class="card">
+          <div class="card-body" style="text-align:center; padding: 28px;">
+            <div style="font-size:2.5rem; margin-bottom:12px;">📊</div>
+            <h3 style="color:var(--forest); margin-bottom:8px;">Smart Calculator</h3>
+            <p style="color:var(--mid); font-size:0.9rem;">Estimate your annual CO₂ footprint across transport, food, energy & lifestyle in minutes.</p>
+            <button onclick="showPage('calculator')" style="margin-top:16px; background:var(--sky); border:1px solid var(--border); color:var(--moss); font-weight:600; padding:8px 20px; border-radius:100px; font-size:0.85rem; transition:all 0.2s;" onmouseover="this.style.background='var(--mist)'" onmouseout="this.style.background='var(--sky)'">Start Calculating →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="text-align:center; padding: 28px;">
+            <div style="font-size:2.5rem; margin-bottom:12px;">🤖</div>
+            <h3 style="color:var(--forest); margin-bottom:8px;">AI-Powered Insights</h3>
+            <p style="color:var(--mid); font-size:0.9rem;">Chat with EcoGuide, your personal AI assistant, for tailored advice and answers to your questions.</p>
+            <button onclick="showPage('assistant')" style="margin-top:16px; background:var(--sky); border:1px solid var(--border); color:var(--moss); font-weight:600; padding:8px 20px; border-radius:100px; font-size:0.85rem; transition:all 0.2s;" onmouseover="this.style.background='var(--mist)'" onmouseout="this.style.background='var(--sky)'">Ask EcoGuide →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="text-align:center; padding: 28px;">
+            <div style="font-size:2.5rem; margin-bottom:12px;">🎯</div>
+            <h3 style="color:var(--forest); margin-bottom:8px;">Track & Reduce</h3>
+            <p style="color:var(--mid); font-size:0.9rem;">Set personal goals, earn badges, and track your progress with visual dashboards over time.</p>
+            <button onclick="showPage('dashboard')" style="margin-top:16px; background:var(--sky); border:1px solid var(--border); color:var(--moss); font-weight:600; padding:8px 20px; border-radius:100px; font-size:0.85rem; transition:all 0.2s;" onmouseover="this.style.background='var(--mist)'" onmouseout="this.style.background='var(--sky)'">View Dashboard →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALCULATOR PAGE -->
+  <div id="page-calculator" class="page">
+    <div class="container">
+      <div class="calc-layout">
+        <!-- Sidebar inputs -->
+        <aside class="calc-sidebar" aria-label="Carbon footprint inputs">
+          <!-- Transport -->
+          <div class="calc-section">
+            <div class="calc-section-header" onclick="toggleSection('transport')" aria-expanded="true">
+              <span class="calc-section-icon" aria-hidden="true">🚗</span>
+              <span class="calc-section-title">Transport</span>
+              <span class="calc-section-toggle open" id="toggle-transport" aria-hidden="true">▼</span>
+            </div>
+            <div class="calc-section-body open" id="body-transport">
+              <div class="form-group">
+                <label class="form-label" for="car_fuel">Car fuel type</label>
+                <select class="form-select" id="car_fuel">
+                  <option value="none">No car</option>
+                  <option value="car_petrol" selected>Petrol/Gasoline</option>
+                  <option value="car_diesel">Diesel</option>
+                  <option value="car_electric">Electric</option>
+                </select>
+              </div>
+              <div class="form-group" id="car-km-group">
+                <label class="form-label" for="car_km">Car distance (km/week)</label>
+                <input type="number" class="form-input" id="car_km" placeholder="e.g. 100" min="0" max="2000">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bike_km">Motorcycle (km/week)</label>
+                <input type="number" class="form-input" id="bike_km" placeholder="e.g. 50" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bus_km">Bus/Metro (km/week)</label>
+                <input type="number" class="form-input" id="bus_km" placeholder="e.g. 80" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="train_km">Train (km/week)</label>
+                <input type="number" class="form-input" id="train_km" placeholder="e.g. 40" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="flights_dom">Domestic flights/year</label>
+                <input type="number" class="form-input" id="flights_dom" placeholder="e.g. 4" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="flights_intl">International flights/year</label>
+                <input type="number" class="form-input" id="flights_intl" placeholder="e.g. 1" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Food -->
+          <div class="calc-section">
+            <div class="calc-section-header" onclick="toggleSection('food')">
+              <span class="calc-section-icon" aria-hidden="true">🍽️</span>
+              <span class="calc-section-title">Diet & Food</span>
+              <span class="calc-section-toggle" id="toggle-food" aria-hidden="true">▼</span>
+            </div>
+            <div class="calc-section-body" id="body-food">
+              <div class="form-group">
+                <label class="form-label" for="diet_type">Diet type</label>
+                <select class="form-select" id="diet_type">
+                  <option value="vegan">Vegan</option>
+                  <option value="vegetarian">Vegetarian</option>
+                  <option value="pescatarian">Pescatarian</option>
+                  <option value="omnivore" selected>Omnivore (mixed)</option>
+                  <option value="heavy_meat">High meat consumption</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="food_waste">Food waste level</label>
+                <select class="form-select" id="food_waste">
+                  <option value="5">Very low (5%)</option>
+                  <option value="15" selected>Average (15%)</option>
+                  <option value="30">High (30%)</option>
+                  <option value="50">Very high (50%)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Energy -->
+          <div class="calc-section">
+            <div class="calc-section-header" onclick="toggleSection('energy')">
+              <span class="calc-section-icon" aria-hidden="true">⚡</span>
+              <span class="calc-section-title">Home Energy</span>
+              <span class="calc-section-toggle" id="toggle-energy" aria-hidden="true">▼</span>
+            </div>
+            <div class="calc-section-body" id="body-energy">
+              <div class="form-group">
+                <label class="form-label" for="electricity">Electricity (kWh/month)</label>
+                <input type="number" class="form-input" id="electricity" placeholder="e.g. 250" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="gas_m3">Natural gas (m³/month)</label>
+                <input type="number" class="form-input" id="gas_m3" placeholder="e.g. 20" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lpg_kg">LPG (kg/month)</label>
+                <input type="number" class="form-input" id="lpg_kg" placeholder="e.g. 5" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="renewable_pct">% from renewable energy</label>
+                <input type="number" class="form-input" id="renewable_pct" placeholder="e.g. 0" min="0" max="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="household_size">Household size</label>
+                <input type="number" class="form-input" id="household_size" placeholder="e.g. 4" min="1" max="20" value="3">
+              </div>
+            </div>
+          </div>
+
+          <!-- Shopping -->
+          <div class="calc-section">
+            <div class="calc-section-header" onclick="toggleSection('shopping')">
+              <span class="calc-section-icon" aria-hidden="true">🛍️</span>
+              <span class="calc-section-title">Shopping & Lifestyle</span>
+              <span class="calc-section-toggle" id="toggle-shopping" aria-hidden="true">▼</span>
+            </div>
+            <div class="calc-section-body" id="body-shopping">
+              <div class="form-group">
+                <label class="form-label" for="new_clothes">New clothing items/year</label>
+                <input type="number" class="form-input" id="new_clothes" placeholder="e.g. 20" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="phone_years">Replace phone every (years)</label>
+                <input type="number" class="form-input" id="phone_years" placeholder="e.g. 2" min="1" max="10" value="3">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="laptop_years">Replace laptop every (years)</label>
+                <input type="number" class="form-input" id="laptop_years" placeholder="e.g. 4" min="1" max="10" value="4">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="secondhand_pct">% items bought second-hand</label>
+                <input type="number" class="form-input" id="secondhand_pct" placeholder="e.g. 20" min="0" max="100">
+              </div>
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="runCalculation()" aria-label="Calculate my carbon footprint">
+            🌍 Calculate My Footprint
+          </button>
+        </aside>
+
+        <!-- Results panel -->
+        <main class="result-panel" id="result-panel" aria-live="polite" aria-label="Calculation results">
+          <div class="empty-state" id="result-empty">
+            <div class="empty-icon">🌱</div>
+            <h3 style="color:var(--forest); margin-bottom:8px;">Ready to calculate</h3>
+            <p>Fill in the form on the left and click "Calculate My Footprint" to see your personalized carbon analysis.</p>
+          </div>
+          <!-- Results are injected here -->
+          <div id="result-output" style="display:none;">
+            <!-- Total card -->
+            <div class="result-total-card" role="region" aria-label="Your total carbon footprint">
+              <div class="result-total-label">Your Annual Carbon Footprint</div>
+              <div class="result-total-num" id="res-total">–</div>
+              <div class="result-total-unit">kg CO₂ equivalent per year</div>
+              <div class="result-comparison" id="res-comparison"></div>
+            </div>
+
+            <!-- Breakdown -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">📊 Emissions Breakdown</div>
+              </div>
+              <div class="card-body">
+                <div class="breakdown-grid" id="breakdown-grid"></div>
+              </div>
+            </div>
+
+            <!-- Equivalents -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">💡 What This Means</div>
+              </div>
+              <div class="card-body">
+                <div class="equivalents" id="equivalents-row"></div>
+              </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">🎯 Personalized Actions</div>
+                <button onclick="getAIInsight()" style="background:var(--sky); border:1px solid var(--border); color:var(--moss); font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:100px;">✨ AI Analysis</button>
+              </div>
+              <div class="card-body">
+                <div class="rec-list" id="rec-list"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="page-dashboard" class="page">
+    <div class="container">
+      <div style="padding: 40px 0 0;">
+        <h2 class="section-title">Your Progress Dashboard</h2>
+        <p class="section-sub">Track your journey to a lower-carbon lifestyle</p>
+      </div>
+
+      <div class="dashboard-grid" id="dashboard-stats">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div class="goals-section">
+        <h3 style="font-weight:700; color:var(--forest); font-size:1.1rem; margin-bottom:4px;">Personal Goals</h3>
+        <p style="color:var(--mid); font-size:0.85rem; margin-bottom:16px;">Set targets and track your progress</p>
+        <div class="goals-grid" id="goals-grid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <div style="padding-bottom: 40px;">
+        <div class="badges-card" id="badges-card">
+          <div style="font-weight:700; color:var(--forest); font-size:1rem; margin-bottom:4px;">🏅 Achievement Badges</div>
+          <div style="color:var(--mid); font-size:0.82rem; margin-bottom:0;">Earn badges for sustainable actions</div>
+          <div class="badges-grid" id="badges-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS PAGE -->
+  <div id="page-tips" class="page">
+    <div class="container tips-layout">
+      <h2 class="section-title">Reduction Tips & Actions</h2>
+      <p class="section-sub">Practical steps to shrink your carbon footprint, sorted by impact</p>
+
+      <div class="tips-filter" role="group" aria-label="Filter tips by category">
+        <button class="filter-btn active" onclick="filterTips('all')" aria-pressed="true">All Tips</button>
+        <button class="filter-btn" onclick="filterTips('transport')" aria-pressed="false">🚗 Transport</button>
+        <button class="filter-btn" onclick="filterTips('food')" aria-pressed="false">🍽️ Food</button>
+        <button class="filter-btn" onclick="filterTips('energy')" aria-pressed="false">⚡ Energy</button>
+        <button class="filter-btn" onclick="filterTips('shopping')" aria-pressed="false">🛍️ Shopping</button>
+      </div>
+
+      <div class="tips-grid" id="tips-grid"></div>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT PAGE -->
+  <div id="page-assistant" class="page">
+    <div class="container">
+      <div class="chat-layout">
+        <div class="chat-header" role="banner">
+          <div class="chat-avatar" aria-hidden="true">🌿</div>
+          <div class="chat-header-text">
+            <h2>EcoGuide — Your AI Carbon Advisor</h2>
+            <p>Ask me anything about reducing your environmental impact</p>
+          </div>
+        </div>
+
+        <div>
+          <p style="font-size:0.82rem; color:var(--mid); margin-bottom:8px; font-weight:500;">Quick questions:</p>
+          <div class="quick-questions" role="list">
+            <button class="quick-q" role="listitem" onclick="sendQuickQ('How can I reduce my transport emissions?')">🚌 Reduce transport</button>
+            <button class="quick-q" role="listitem" onclick="sendQuickQ('What diet has the lowest carbon footprint?')">🥗 Low-carbon diet</button>
+            <button class="quick-q" role="listitem" onclick="sendQuickQ('How much does flying affect my footprint?')">✈️ Flying impact</button>
+            <button class="quick-q" role="listitem" onclick="sendQuickQ('Give me 3 easy actions I can take today')">✅ Easy actions today</button>
+            <button class="quick-q" role="listitem" onclick="sendQuickQ('Explain carbon offsetting — is it worth it?')">🌳 Carbon offsets</button>
+          </div>
+        </div>
+
+        <div class="chat-window" id="chat-window" role="log" aria-label="Conversation with EcoGuide" aria-live="polite">
+          <div class="chat-msg bot">
+            👋 Hi! I'm <strong>EcoGuide</strong>, your personal carbon footprint advisor. I'm here to help you understand your environmental impact and find practical ways to reduce it.<br><br>
+            You can ask me anything — from specific questions about your lifestyle to broader questions about climate change. What would you like to explore?
+          </div>
+        </div>
+
+        <div class="chat-input-row">
+          <input
+            type="text"
+            class="chat-input"
+            id="chat-input"
+            placeholder="Ask EcoGuide anything..."
+            aria-label="Message EcoGuide"
+            onkeydown="if(event.key==='Enter') sendChat()"
+          >
+          <button class="chat-send-btn" onclick="sendChat()" aria-label="Send message">➤</button>
+        </div>
+
+        <div style="text-align:center;">
+          <button onclick="clearChat()" style="background:none; color:var(--mid); font-size:0.8rem; text-decoration:underline;">Clear conversation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="page-profile" class="page">
+    <div class="container">
+      <div class="profile-layout">
+        <div class="profile-header">
+          <div class="profile-avatar" aria-hidden="true">👤</div>
+          <div class="profile-name" id="profile-display-name">Your Profile</div>
+          <div class="profile-joined" id="profile-display-joined">Set up your profile to personalize insights</div>
+        </div>
+
+        <div class="profile-form-card">
+          <div class="profile-form-title">Personal Details</div>
+          <div class="form-group">
+            <label class="form-label" for="p_name">Your name</label>
+            <input type="text" class="form-input" id="p_name" placeholder="e.g. Priya">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="p_location">Location / Country</label>
+            <input type="text" class="form-input" id="p_location" placeholder="e.g. Mumbai, India">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="p_goal">Primary sustainability goal</label>
+            <select class="form-select" id="p_goal">
+              <option value="awareness">Understand my impact</option>
+              <option value="reduce_transport">Reduce transport emissions</option>
+              <option value="reduce_food">Improve my diet</option>
+              <option value="reduce_energy">Cut home energy use</option>
+              <option value="lifestyle">Overall lifestyle change</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="p_motivation">What motivates you?</label>
+            <select class="form-select" id="p_motivation">
+              <option value="future_generations">Future generations</option>
+              <option value="health">Personal health</option>
+              <option value="cost_savings">Cost savings</option>
+              <option value="environment">Love of nature</option>
+              <option value="social">Setting an example</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="p_target">Annual CO₂ reduction target (kg)</label>
+            <input type="number" class="form-input" id="p_target" placeholder="e.g. 500" min="0">
+          </div>
+          <button class="save-profile-btn" onclick="saveProfile()">Save Profile</button>
+        </div>
+
+        <div class="profile-form-card">
+          <div class="profile-form-title">Data & Privacy</div>
+          <p style="color:var(--mid); font-size:0.85rem; margin-bottom:16px;">Your data is stored only in your browser's local storage and never sent to any server.</p>
+          <button onclick="exportData()" style="width:100%; background:var(--sky); border:1px solid var(--border); color:var(--moss); font-weight:600; padding:12px; border-radius:var(--r); margin-bottom:8px; transition:all 0.2s;" onmouseover="this.style.background='var(--mist)'" onmouseout="this.style.background='var(--sky)'">📥 Export My Data (JSON)</button>
+          <button onclick="confirmClear()" style="width:100%; background:transparent; border:1px solid #fca5a5; color:#dc2626; font-weight:600; padding:12px; border-radius:var(--r); transition:all 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">🗑️ Clear All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- ONBOARDING OVERLAY -->
+  <div class="onboarding-overlay" id="onboarding" role="dialog" aria-modal="true" aria-label="Welcome to CarbonTrack" style="display:none;">
+    <div class="onboarding-card">
+      <div class="onboarding-emoji" aria-hidden="true">🌿</div>
+      <h2 class="onboarding-title">Welcome to CarbonTrack</h2>
+      <p class="onboarding-sub">Start understanding your environmental impact in just a few minutes. Calculate your footprint, get AI-powered insights, and take meaningful action.</p>
+      <button class="onboarding-btn" onclick="startJourney()">Calculate My Footprint →</button>
+      <button class="onboarding-skip" onclick="dismissOnboarding()">Skip intro</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="src/data/emission-factors.js"></script>
+<script src="src/utils/calculator.js"></script>
+<script src="src/utils/storage.js"></script>
+<script src="src/utils/ai-assistant.js"></script>
+
+<script>
+// ===== APP STATE =====
+let currentPage = 'home';
+let lastResult = null;
+let tipsFilter = 'all';
+let doneTips = new Set();
+const calculator = new CarbonCalculator();
+const ai = new CarbonAIAssistant();
+
+// ===== NAVIGATION =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    const pages = ['home','calculator','dashboard','tips','assistant','profile'];
+    t.classList.toggle('active', pages[i] === name);
+    t.setAttribute('aria-selected', pages[i] === name);
+  });
+  const page = document.getElementById(`page-${name}`);
+  if (page) {
+    page.classList.add('active');
+    currentPage = name;
+    if (name === 'dashboard') renderDashboard();
+    if (name === 'tips') renderTips(tipsFilter);
+    if (name === 'profile') loadProfile();
+  }
+}
+
+// ===== SECTION TOGGLE =====
+function toggleSection(id) {
+  const body = document.getElementById(`body-${id}`);
+  const toggle = document.getElementById(`toggle-${id}`);
+  const header = body.previousElementSibling;
+  const isOpen = body.classList.toggle('open');
+  toggle.classList.toggle('open', isOpen);
+  header.setAttribute('aria-expanded', isOpen);
+}
+
+// ===== CALCULATOR =====
+function getFormData() {
+  const carFuel = document.getElementById('car_fuel').value;
+  return {
+    transport: {
+      car_fuel_type: carFuel !== 'none' ? carFuel : null,
+      car_km_per_week: carFuel !== 'none' ? parseFloat(document.getElementById('car_km').value) || 0 : 0,
+      motorcycle_km_per_week: parseFloat(document.getElementById('bike_km').value) || 0,
+      bus_km_per_week: parseFloat(document.getElementById('bus_km').value) || 0,
+      train_km_per_week: parseFloat(document.getElementById('train_km').value) || 0,
+      flights_domestic_per_year: parseFloat(document.getElementById('flights_dom').value) || 0,
+      flights_international_per_year: parseFloat(document.getElementById('flights_intl').value) || 0,
+    },
+    food: {
+      type: document.getElementById('diet_type').value,
+      food_waste_pct: parseFloat(document.getElementById('food_waste').value) / 100 || 0.15,
+    },
+    energy: {
+      electricity_kwh_per_month: parseFloat(document.getElementById('electricity').value) || 0,
+      gas_m3_per_month: parseFloat(document.getElementById('gas_m3').value) || 0,
+      lpg_kg_per_month: parseFloat(document.getElementById('lpg_kg').value) || 0,
+      renewable_pct: parseFloat(document.getElementById('renewable_pct').value) || 0,
+      household_size: parseFloat(document.getElementById('household_size').value) || 1,
+    },
+    shopping: {
+      new_clothes_per_year: parseFloat(document.getElementById('new_clothes').value) || 0,
+      new_phone_years: parseFloat(document.getElementById('phone_years').value) || 3,
+      new_laptop_years: parseFloat(document.getElementById('laptop_years').value) || 4,
+      secondhand_pct: parseFloat(document.getElementById('secondhand_pct').value) || 0,
+    }
+  };
+}
+
+function runCalculation() {
+  const data = getFormData();
+  const result = calculator.calculateTotal(data);
+  const recs = calculator.getRecommendations(result, data);
+  lastResult = { result, data, recs };
+
+  storage.saveFootprintEntry({ userData: data, result });
+  storage.incrementStat('calculations');
+
+  renderResults(result, recs);
+
+  // Badge checks
+  if (storage.getStat('calculations') >= 1) {
+    if (storage.unlockBadge('first_step')) showToast('🌱 Badge unlocked: First Step!', 'success');
+  }
+  if (result.total < 4900) {
+    if (storage.unlockBadge('climate_champion')) showToast('🏆 Badge unlocked: Climate Champion!', 'success');
+  }
+}
+
+function renderResults(result, recs) {
+  document.getElementById('result-empty').style.display = 'none';
+  document.getElementById('result-output').style.display = 'block';
+
+  // Total
+  document.getElementById('res-total').textContent = result.total.toLocaleString();
+
+  // Comparison badges
+  const compEl = document.getElementById('res-comparison');
+  const worldDiff = result.comparison.vs_world_avg;
+  const indiaDiff = result.comparison.vs_india_avg;
+  compEl.innerHTML = `
+    <span class="result-comp-badge ${worldDiff > 0 ? 'over' : 'under'}">
+      ${worldDiff > 0 ? '↑' : '↓'} ${Math.abs(worldDiff)}% vs World avg
+    </span>
+    <span class="result-comp-badge ${indiaDiff > 0 ? 'over' : 'under'}">
+      ${indiaDiff > 0 ? '↑' : '↓'} ${Math.abs(indiaDiff)}% vs India avg
+    </span>
+  `;
+
+  // Breakdown
+  const cats = [
+    { key: 'transport', label: 'Transport', icon: '🚗' },
+    { key: 'food', label: 'Food & Diet', icon: '🍽️' },
+    { key: 'energy', label: 'Home Energy', icon: '⚡' },
+    { key: 'shopping', label: 'Shopping', icon: '🛍️' }
+  ];
+  document.getElementById('breakdown-grid').innerHTML = cats.map(c => `
+    <div class="breakdown-item">
+      <div class="breakdown-icon" aria-hidden="true">${c.icon}</div>
+      <div class="breakdown-cat">${c.label}</div>
+      <div class="breakdown-val">${result.breakdown[c.key].toLocaleString()} kg</div>
+      <div class="breakdown-pct">${result.percentages[c.key]}% of total</div>
+      <div class="breakdown-bar" role="progressbar" aria-valuenow="${result.percentages[c.key]}" aria-valuemin="0" aria-valuemax="100">
+        <div class="breakdown-bar-fill" style="width:${result.percentages[c.key]}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Equivalents
+  document.getElementById('equivalents-row').innerHTML = `
+    <div class="equiv-item">
+      <div class="equiv-icon" aria-hidden="true">🌳</div>
+      <div class="equiv-val">${result.trees_to_offset.toLocaleString()}</div>
+      <div class="equiv-label">trees to offset</div>
+    </div>
+    <div class="equiv-item">
+      <div class="equiv-icon" aria-hidden="true">🚗</div>
+      <div class="equiv-val">${result.equivalent.km_driven.toLocaleString()}</div>
+      <div class="equiv-label">km driven</div>
+    </div>
+    <div class="equiv-item">
+      <div class="equiv-icon" aria-hidden="true">🥩</div>
+      <div class="equiv-val">${result.equivalent.beef_kg.toLocaleString()}</div>
+      <div class="equiv-label">kg of beef</div>
+    </div>
+    <div class="equiv-item">
+      <div class="equiv-icon" aria-hidden="true">📱</div>
+      <div class="equiv-val">${(result.equivalent.smartphone_charges/1000).toFixed(0)}k</div>
+      <div class="equiv-label">phone charges</div>
+    </div>
+  `;
+
+  // Recommendations
+  const priorityIcons = { high: '🔴', medium: '🟡', low: '🟢' };
+  document.getElementById('rec-list').innerHTML = recs.map(r => `
+    <div class="rec-item priority-${r.priority}">
+      <span class="rec-icon" aria-hidden="true">${priorityIcons[r.priority] || '🟢'}</span>
+      <div style="flex:1;">
+        <div class="rec-action">${r.action}</div>
+        <div class="rec-context">${r.context}</div>
+      </div>
+      <div class="rec-saving">-${r.potential_saving.toLocaleString()} kg</div>
+    </div>
+  `).join('');
+
+  showToast('✅ Footprint calculated! Check your results.', 'success');
+}
+
+async function getAIInsight() {
+  if (!lastResult) { showToast('Calculate your footprint first!'); return; }
+  showPage('assistant');
+  const profile = storage.getProfile() || {};
+  const msg = document.getElementById('chat-window');
+  const typing = addTypingIndicator();
+  const response = await ai.generateInsight(lastResult.result, profile);
+  msg.removeChild(typing);
+  addBotMessage(response.message);
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const logs = storage.getFootprintLogs();
+  const latestLog = logs.length > 0 ? logs[logs.length - 1] : null;
+  const profile = storage.getProfile() || {};
+
+  // Stats
+  const statsHtml = `
+    <div class="stat-card">
+      <div class="stat-card-icon" aria-hidden="true">📊</div>
+      <div class="stat-card-val">${latestLog ? latestLog.result.total.toLocaleString() : '–'}</div>
+      <div class="stat-card-label">kg CO₂/year (latest)</div>
+      ${latestLog && latestLog.result.comparison ? `
+        <div class="stat-card-delta ${latestLog.result.comparison.vs_india_avg > 0 ? 'up' : 'down'}">
+          ${latestLog.result.comparison.vs_india_avg > 0 ? '↑' : '↓'} ${Math.abs(latestLog.result.comparison.vs_india_avg)}% vs India avg
+        </div>` : ''}
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" aria-hidden="true">🧮</div>
+      <div class="stat-card-val">${logs.length}</div>
+      <div class="stat-card-label">Calculations done</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" aria-hidden="true">🎯</div>
+      <div class="stat-card-val">${profile.target_kg ? profile.target_kg.toLocaleString() : '–'}</div>
+      <div class="stat-card-label">kg reduction goal</div>
+    </div>
+    <div class="chart-container" style="grid-column: span 2;">
+      <div style="font-weight:700; color:var(--forest); font-size:1rem;">📈 Footprint Over Time</div>
+      <div class="chart-canvas-wrap">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" aria-hidden="true">🌳</div>
+      <div class="stat-card-val">${latestLog ? latestLog.result.trees_to_offset : '–'}</div>
+      <div class="stat-card-label">trees needed to offset</div>
+    </div>
+  `;
+  document.getElementById('dashboard-stats').innerHTML = statsHtml;
+  renderTrendChart(logs);
+  renderBadges();
+  renderGoals();
+}
+
+function renderTrendChart(logs) {
+  const canvas = document.getElementById('trendChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const trend = logs.slice(-8);
+
+  if (trend.length === 0) {
+    ctx.fillStyle = '#4a7c5f';
+    ctx.font = '14px Space Grotesk, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('No data yet — calculate your footprint to see trends', canvas.width/2, 100);
+    return;
+  }
+
+  const vals = trend.map(l => l.result.total);
+  const labels = trend.map(l => new Date(l.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }));
+  const max = Math.max(...vals, 5000);
+  const w = canvas.clientWidth || 600;
+  const h = 200;
+  canvas.width = w; canvas.height = h;
+  const pad = { t: 20, r: 20, b: 40, l: 60 };
+  const gw = w - pad.l - pad.r;
+  const gh = h - pad.t - pad.b;
+
+  ctx.clearRect(0,0,w,h);
+
+  // Grid lines
+  ctx.strokeStyle = '#e8f5e1';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (gh / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = '#4a7c5f';
+    ctx.font = '10px Space Grotesk, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(max - (max/4)*i).toLocaleString(), pad.l - 6, y + 4);
+  }
+
+  if (trend.length < 2) {
+    const x = pad.l + gw/2;
+    const y = pad.t + gh - (vals[0] / max) * gh;
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#2d6a4f';
+    ctx.fill();
+    return;
+  }
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#52b788';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  trend.forEach((l, i) => {
+    const x = pad.l + (i / (trend.length-1)) * gw;
+    const y = pad.t + gh - (vals[i] / max) * gh;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(pad.l + gw, pad.t + gh);
+  ctx.lineTo(pad.l, pad.t + gh);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gh);
+  grad.addColorStop(0, 'rgba(82,183,136,0.15)');
+  grad.addColorStop(1, 'rgba(82,183,136,0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Dots & labels
+  trend.forEach((l, i) => {
+    const x = pad.l + (i / (trend.length-1)) * gw;
+    const y = pad.t + gh - (vals[i] / max) * gh;
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#2d6a4f'; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#4a7c5f';
+    ctx.font = '9px Space Grotesk, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], x, h - pad.b + 14);
+  });
+}
+
+function renderBadges() {
+  const earned = storage.getEarnedBadges().map(b => b.id);
+  document.getElementById('badges-grid').innerHTML = BADGES.map(b => `
+    <div class="badge-item ${earned.includes(b.id) ? 'earned' : 'locked'}" title="${b.description}">
+      <div class="badge-icon" aria-hidden="true">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>
+  `).join('');
+}
+
+function renderGoals() {
+  const goals = storage.getGoals();
+  const defaultGoals = [
+    { id: 'g1', title: 'Reduce transport by 20%', category: 'transport', target: 100, progress: 0 },
+    { id: 'g2', title: 'Try meat-free 8 days/month', category: 'food', target: 8, progress: 0 },
+  ];
+  const displayGoals = goals.length > 0 ? goals : defaultGoals;
+
+  document.getElementById('goals-grid').innerHTML = displayGoals.map(g => {
+    const pct = Math.min(100, Math.round((g.progress / g.target) * 100));
+    return `
+      <div class="goal-card">
+        <div class="goal-header">
+          <div class="goal-title">${g.title}</div>
+          <span class="goal-category">${g.category}</span>
+        </div>
+        <div class="goal-progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="${g.title}: ${pct}% complete">
+          <div class="goal-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="goal-meta">
+          <span>${g.progress} / ${g.target}</span>
+          <span>${pct}% complete</span>
+        </div>
+      </div>
+    `;
+  }).join('') + `
+    <button class="add-goal-btn" onclick="showToast('Goal setting coming soon! Use the AI Guide to get personalized goal suggestions.')">
+      + Set a New Goal
+    </button>
+  `;
+}
+
+// ===== TIPS =====
+function renderTips(filter) {
+  tipsFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const isActive = btn.textContent.toLowerCase().includes(filter) || (filter === 'all' && btn.textContent === 'All Tips');
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive);
+  });
+
+  const allTips = [];
+  Object.entries(REDUCTION_TIPS).forEach(([cat, tips]) => {
+    tips.forEach((tip, i) => allTips.push({ ...tip, category: cat, id: `${cat}_${i}` }));
+  });
+
+  const filtered = filter === 'all' ? allTips : allTips.filter(t => t.category === filter);
+  const sorted = filtered.sort((a, b) => {
+    const order = { high: 0, medium: 1, low: 2 };
+    return order[a.impact] - order[b.impact];
+  });
+
+  const categoryIcons = { transport: '🚗', food: '🍽️', energy: '⚡', shopping: '🛍️' };
+
+  document.getElementById('tips-grid').innerHTML = sorted.map(tip => `
+    <div class="tip-card" role="article">
+      <div class="tip-card-top">
+        <span style="font-size:0.8rem; color:var(--mid);">${categoryIcons[tip.category] || '💡'} ${tip.category}</span>
+        <span class="tip-difficulty ${tip.difficulty}">${tip.difficulty}</span>
+      </div>
+      <div class="tip-title">${tip.action}</div>
+      <div class="tip-saving">Saves up to <strong>~${tip.saving.toLocaleString()} kg CO₂/year</strong></div>
+      <div>
+        <span class="tip-impact ${tip.impact}">
+          ${tip.impact === 'high' ? '🔥 High impact' : tip.impact === 'medium' ? '⚡ Medium impact' : '✅ Low impact'}
+        </span>
+      </div>
+      <button class="tip-done-btn ${doneTips.has(tip.id) ? 'done' : ''}" onclick="markTipDone('${tip.id}', this)" aria-label="${doneTips.has(tip.id) ? 'Marked as done' : 'Mark as done: ' + tip.action}">
+        ${doneTips.has(tip.id) ? '✅ Added to my plan' : '+ Add to my plan'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function filterTips(cat) {
+  renderTips(cat);
+}
+
+function markTipDone(id, btn) {
+  if (!doneTips.has(id)) {
+    doneTips.add(id);
+    btn.textContent = '✅ Added to my plan';
+    btn.classList.add('done');
+    showToast('Added to your plan! Keep going 🌿', 'success');
+    storage.incrementStat('tips_adopted');
+  }
+}
+
+// ===== AI CHAT =====
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMessage(text);
+  const typing = addTypingIndicator();
+  const ctx = lastResult ? { result: lastResult.result } : null;
+  const response = await ai.chat(text, ctx);
+  document.getElementById('chat-window').removeChild(typing);
+  addBotMessage(response.message);
+}
+
+function sendQuickQ(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+function addUserMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg user';
+  div.textContent = text;
+  const win = document.getElementById('chat-window');
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+
+function addBotMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  div.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  const win = document.getElementById('chat-window');
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const div = document.createElement('div');
+  div.className = 'chat-typing';
+  div.innerHTML = '<div class="chat-dot"></div><div class="chat-dot"></div><div class="chat-dot"></div>';
+  div.setAttribute('aria-label', 'EcoGuide is typing');
+  const win = document.getElementById('chat-window');
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+  return div;
+}
+
+function clearChat() {
+  ai.clearHistory();
+  const win = document.getElementById('chat-window');
+  win.innerHTML = `
+    <div class="chat-msg bot">
+      👋 Hi again! I'm <strong>EcoGuide</strong>. How can I help you reduce your carbon footprint today?
+    </div>
+  `;
+}
+
+// ===== PROFILE =====
+function loadProfile() {
+  const p = storage.getProfile();
+  if (!p) return;
+  if (p.name) {
+    document.getElementById('p_name').value = p.name;
+    document.getElementById('profile-display-name').textContent = p.name;
+  }
+  if (p.location) document.getElementById('p_location').value = p.location;
+  if (p.goal) document.getElementById('p_goal').value = p.goal;
+  if (p.motivation) document.getElementById('p_motivation').value = p.motivation;
+  if (p.target_kg) document.getElementById('p_target').value = p.target_kg;
+  if (p.created_at) {
+    document.getElementById('profile-display-joined').textContent =
+      `Member since ${new Date(p.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' })}`;
+  }
+}
+
+function saveProfile() {
+  const profile = {
+    name: document.getElementById('p_name').value,
+    location: document.getElementById('p_location').value,
+    goal: document.getElementById('p_goal').value,
+    motivation: document.getElementById('p_motivation').value,
+    target_kg: parseFloat(document.getElementById('p_target').value) || null,
+    created_at: storage.getProfile()?.created_at || new Date().toISOString()
+  };
+  storage.saveProfile(profile);
+  if (profile.name) {
+    document.getElementById('profile-display-name').textContent = profile.name;
+  }
+  showToast('Profile saved! ✅', 'success');
+}
+
+function exportData() {
+  const data = {
+    profile: storage.getProfile(),
+    logs: storage.getFootprintLogs(),
+    goals: storage.getGoals(),
+    badges: storage.getEarnedBadges(),
+    exported_at: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'carbontrack-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Data exported! 📥', 'success');
+}
+
+function confirmClear() {
+  if (confirm('Clear all your CarbonTrack data? This cannot be undone.')) {
+    storage.clear();
+    showToast('All data cleared.', 'warning');
+    loadProfile();
+  }
+}
+
+// ===== TOAST =====
+function showToast(message, type = '') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = 'all 0.3s';
+    setTimeout(() => container.removeChild(toast), 300);
+  }, 3500);
+}
+
+// ===== ONBOARDING =====
+function startJourney() {
+  dismissOnboarding();
+  showPage('calculator');
+}
+
+function dismissOnboarding() {
+  document.getElementById('onboarding').style.display = 'none';
+  storage.set('onboarding_done', true);
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  // Handle car fuel type toggle
+  document.getElementById('car_fuel').addEventListener('change', function() {
+    document.getElementById('car-km-group').style.display =
+      this.value === 'none' ? 'none' : 'block';
+  });
+
+  // Show onboarding on first visit
+  if (storage.isFirstVisit()) {
+    document.getElementById('onboarding').style.display = 'flex';
+  }
+
+  // Load profile
+  loadProfile();
+});
+</script>
+</body>
+</html>
